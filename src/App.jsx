@@ -1,9 +1,4 @@
-/*import { useState } from 'react'
 
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png' 
-*/
 import './App.css'
 
 import { useEffect, useState } from "react";
@@ -11,12 +6,15 @@ import { useEffect, useState } from "react";
 function App() {
   const [joes, setJoes] = useState([]);
 
-  useEffect(() => {
-    fetch("https://localhost:5116/api/joes") // 👈 we’ll fix port next
-      .then(res => res.json())
-      .then(data => setJoes(data.data))
-      .catch(err => console.error(err));
-  }, []);
+ useEffect(() => {
+  fetch("http://localhost:5116/api/joes")
+    .then(res => res.json())
+    .then(data => {
+      console.log("API DATA:", data);
+      setJoes(data)
+     })
+    .catch(err => console.error("API error:", err));
+}, []);
 
   return (
     <div>
