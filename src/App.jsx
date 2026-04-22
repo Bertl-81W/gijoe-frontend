@@ -24,7 +24,7 @@ const handleSubmit = (e) => {
     name,
     placeOfBirth,
     specialty
-  };
+  };  
 
   fetch("http://localhost:5116/api/joes", {
     method: "POST",
@@ -32,16 +32,27 @@ const handleSubmit = (e) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(newJoe)
-  })
+  })  
     .then(res => res.json())
     .then(data => {
-      setJoes([...joes, data]);
+      setJoes(prev => [...prev, data]);
       setName("");
       setPlaceOfBirth("");
       setSpecialty("");
     })
     .catch(err => console.error(err));
+};  
+
+    const handleDelete = (id) => {
+  fetch(`http://localhost:5116/api/joes/${id}`, {
+    method: "DELETE"
+  })
+    .then(() => {
+      setJoes(prev => prev.filter(joe => joe.id !== id));
+    })
+    .catch(err => console.error(err));
 };
+
 
   return (
     <div>
@@ -77,7 +88,12 @@ const handleSubmit = (e) => {
           <h3>{joe.name}</h3>
           <p>{joe.placeOfBirth}</p>
           <p>{joe.specialty}</p>
-        </div>
+
+          <button onClick={() => handleDelete(joe.id)}>
+            Delete
+          </button>
+
+        </div>        
       ))}
     </div>
   ); 
