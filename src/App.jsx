@@ -67,7 +67,7 @@ const handleSubmit = (e) => {
       setJoes([data]); 
     })
     .catch(() => {
-      setJoes([]); // clear if Joe is not found
+      setJoes([]); // clears if Joe is not found
     });
 };
 
