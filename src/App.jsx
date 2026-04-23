@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect, useState } from "react";
 
 function App() {
+  const [search, setSearch] = useState("");
   const [joes, setJoes] = useState([]);
   const [name, setName] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
@@ -48,18 +49,52 @@ const handleSubmit = (e) => {
 };  
 
     const handleDelete = (id) => {
-  fetch(`http://localhost:5116/api/joes/${id}`, {
-    method: "DELETE"
+     fetch(`http://localhost:5116/api/joes/${id}`, {
+     method: "DELETE"
   })
     .then(() => {
       setJoes(prev => prev.filter(joe => joe.id !== id));
     })
     .catch(err => console.error(err));
 };
+    const handleSearch = () => {
+  fetch(`http://localhost:5116/api/joes/by-name/${search}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Not found");
+      return res.json();
+    })
+    .then(data => {
+      setJoes([data]); 
+    })
+    .catch(() => {
+      setJoes([]); // clear if Joe is not found
+    });
+};
 
   return (
     <div>
       <h1>GI Joe Characters</h1>
+
+    <div>
+      <input
+       type="text"
+       placeholder="Search by name..."
+       value={search}
+       onChange={(e) => setSearch(e.target.value)}
+      />
+ 
+    <button onClick={handleSearch}>
+      Search
+    </button>
+
+    <button onClick={() => {
+    fetch("http://localhost:5116/api/joes?pageSize=100")
+      .then(res => res.json())
+      .then(data => setJoes(data.data));
+    }}>
+    Reset
+    </button>
+   </div>
 
        <form onSubmit={handleSubmit}>
   <input
@@ -88,7 +123,7 @@ const handleSubmit = (e) => {
 
     {Array.isArray(joes) && joes.length > 0 ? (
       joes.map((joe) => (
-        <div key={joe.id}>
+        <div key={joe.id} className="card">
         <h3>{joe.name}</h3>
         <p>{joe.placeOfBirth}</p>
         <p>{joe.specialty}</p>
