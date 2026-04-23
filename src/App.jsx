@@ -33,9 +33,13 @@ const handleSubmit = (e) => {
     },
     body: JSON.stringify(newJoe)
   })  
+  .then(() => {      
+      return fetch("http://localhost:5116/api/joes?pageSize=100");
+    })
+
     .then(res => res.json())
     .then(data => {
-      setJoes(prev => [...prev, data]);
+      setJoes(data.data);
       setName("");
       setPlaceOfBirth("");
       setSpecialty("");
@@ -52,7 +56,6 @@ const handleSubmit = (e) => {
     })
     .catch(err => console.error(err));
 };
-
 
   return (
     <div>
@@ -83,18 +86,21 @@ const handleSubmit = (e) => {
   <button type="submit">Add Joe</button>
 </form>
 
-      {Array.isArray(joes) && joes.map((joe) => (
+    {Array.isArray(joes) && joes.length > 0 ? (
+      joes.map((joe) => (
         <div key={joe.id}>
-          <h3>{joe.name}</h3>
-          <p>{joe.placeOfBirth}</p>
-          <p>{joe.specialty}</p>
+        <h3>{joe.name}</h3>
+        <p>{joe.placeOfBirth}</p>
+        <p>{joe.specialty}</p>
 
-          <button onClick={() => handleDelete(joe.id)}>
-            Delete
-          </button>
-
-        </div>        
-      ))}
+      <button onClick={() => handleDelete(joe.id)}>
+        Delete
+      </button>
+    </div>
+  ))
+) : (
+  <p>No characters found</p>
+)}
     </div>
   ); 
 }
