@@ -7,13 +7,17 @@ function App() {
   const [name, setName] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [specialty, setSpecialty] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editPlaceOfBirth, setEditPlaceOfBirth] = useState("");
+  const [editSpecialty, setEditSpecialty] = useState("");
 
  useEffect(() => {
   fetch("http://localhost:5116/api/joes")
     .then(res => res.json())
     .then(data => {
       console.log("API DATA:", data);
-      setJoes(data)
+      setJoes(data.data)
      })
     .catch(err => console.error("API error:", err));
 }, []);
@@ -58,19 +62,33 @@ const handleSubmit = (e) => {
     .catch(err => console.error(err));
 };
     const handleSearch = () => {
-  fetch(`http://localhost:5116/api/joes/by-name/${search}`)
+  fetch(`http://localhost:5116/api/joes/search?name=${search}`)
     .then(res => {
       if (!res.ok) throw new Error("Not found");
       return res.json();
     })
     .then(data => {
-      setJoes([data]); 
+      setJoes(data); 
     })
     .catch(() => {
-      setJoes([]); // clears if Joe is not found
+      setJoes([]); 
     });
 };
+    const handleEdit = (joe) => {
+      setEditingId(joe.id);
+      setEditName(joe.name);
+      setEditPlaceOfBirth(joe.placeOfBirth);
+      setEditSpecialty(joe.specialty);
+};
+const handleSave = (id) => {
 
+    const updatedJoe = {
+        name: editName,
+        placeOfBirth: editPlaceOfBirth,
+        specialty: editSpecialty
+    };
+
+};
   return (
     <div>
       <h1>GI Joe Characters</h1>
@@ -124,18 +142,73 @@ const handleSubmit = (e) => {
     {Array.isArray(joes) && joes.length > 0 ? (
       joes.map((joe) => (
         <div key={joe.id} className="card">
-        <h3>{joe.name}</h3>
-        <p>{joe.placeOfBirth}</p>
-        <p>{joe.specialty}</p>
+            {editingId === joe.id ? (
 
-      <button onClick={() => handleDelete(joe.id)}>
-        Delete
-      </button>
-    </div>
+        <>
+<h3>Editing Character</h3>
+
+<input 
+value={editName}
+onChange={(e) => setEditName(e.target.value)}
+/>
+<input 
+value={editPlaceOfBirth}
+onChange={(e) => setEditPlaceOfBirth(e.target.value)}
+/>
+<input 
+value={editSpecialty}
+onChange={(e) => setEditSpecialty(e.target.value)}
+/>
+
+<button onClick={() => {
+  fetch(`http://localhost:5116/api/joes/${editingId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: editName,
+      placeOfBirth: editPlaceOfBirth,
+      specialty: editSpecialty
+    })
+  })
+    .then(() => {
+      setEditingId(null);
+        // refreshes the list of Jooes after editing them
+      fetch("http://localhost:5116/api/joes?pageSize=100")
+        .then(res => res.json())
+        .then(data => setJoes(data.data));
+    })
+    .catch(err => console.error(err));
+}}>
+  Save
+</button>
+
+<button onClick={() => setEditingId(null)}>
+    Cancel
+</button>
+</>        
+
+        ) : (
+        <>
+          <h3>{joe.name}</h3>
+          <p>{joe.placeOfBirth}</p>
+          <p>{joe.specialty}</p>
+
+          <button onClick={() => handleDelete(joe.id)}>
+            Delete
+          </button>
+
+          <button onClick={() => handleEdit(joe)}>
+            Edit
+          </button>
+        </>
+      )}
+    </div>  
   ))
 ) : (
-  <p>No characters found</p>
-)}
+  <p>No characters found</p> 
+)} 
     </div>
   ); 
 }

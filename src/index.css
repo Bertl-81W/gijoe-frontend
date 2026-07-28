@@ -1,8 +1,16 @@
-body {
+body {  
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url('./assets/Camo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #e6e6e6;
+/*
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #1b2a1b; 
-  color: #e6e6e6;   
+  color: #e6e6e6;   */
 }
 
 h1 {
@@ -37,14 +45,18 @@ button {
   color: white;
   cursor: pointer;
 }
-
 button:hover {
   background-color: #6b8e23;
 }
 #root {
-  background-color: rgba(0, 0, 0, 0.6); /* darkoverlay for the cards */
   min-height: 100vh;
-  padding-bottom: 20px;
+  width: 100%;
+
+  background-color: rgba(0, 0, 0, 0.65);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .card {
   border: 1px solid #444;
