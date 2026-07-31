@@ -1,3 +1,4 @@
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -181,4 +182,125 @@
     right: 0;
     border-right-color: var(--border);
   }
+}
+/*.joe-card{
+  background-color: #d8c48a;
+  border: 5px solid black;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 5px 5px 15px black;
+}
+
+.cobra-card{
+  background-color: #7a0000;
+  color: white;
+  border: 5px solid black;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 5px 5px 15px black;
+}
+*/
+
+/*.joe-card,
+.cobra-card{
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    border:5px solid black;
+    box-shadow:5px 5px 15px black;
+}
+
+
+.joe-card{
+    background:#c9b67a;
+}
+
+
+.cobra-card{
+    background:#8b0000;
+    color:white;
+}
+
+
+.joe-card h2,
+.cobra-card h2{
+    text-align:center;
+    text-transform:uppercase;
+}
+
+
+.joe-card h3,
+.cobra-card h3{
+    text-align:center;
+    font-size:2rem;
+}
+
+
+.joe-card h4,
+.cobra-card h4{
+    margin-bottom:0;
+    text-transform:uppercase;
+} */
+
+.joe-card {
+    background: #c9b67a;
+    color: #111;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+
+    border: 6px solid #b7b7b7;
+
+    box-shadow:
+        inset 0 0 8px #ffffff,
+        0 0 10px #555,
+        0 0 20px rgba(0,0,0,.5);
+
+    background-image:
+        linear-gradient(
+            135deg,
+            #d8d8d8 0%,
+            #bdbdbd 25%,
+            #eeeeee 50%,
+            #bdbdbd 75%,
+            #d8d8d8 100%
+        );
+
+    position: relative;
+}
+
+
+.cobra-card {
+    background: #5a0000;
+    color: white;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+
+    border: 6px solid #6f6f6f;
+
+    box-shadow:
+        inset 0 0 8px #ffffff30,
+        0 0 12px #111,
+        0 0 25px rgba(120,0,0,.7);
+
+    background-image:
+        linear-gradient(
+            135deg,
+            #2b0000 0%,
+            #5c0000 50%,
+            #320000 100%
+        );
+
+    position: relative;
+}
+.joe-card h2,
+.cobra-card h2,
+.joe-card h3,
+.cobra-card h3,
+.joe-card h4,
+.cobra-card h4 {
+    font-family: 'Black Ops One', sans-serif;
 }
