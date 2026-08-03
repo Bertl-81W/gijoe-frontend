@@ -5,14 +5,16 @@ function App() {
   const [search, setSearch] = useState("");
   const [joes, setJoes] = useState([]);
   const [name, setName] = useState("");
-  const [placeOfBirth, setPlaceOfBirth] = useState("");
+  const [accessories, setAccessories] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [faction, setFaction] = useState("");
+  const [hasFileCard, setHasFileCard] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
-  const [editPlaceOfBirth, setEditPlaceOfBirth] = useState("");
+  const [editAccessories, setEditAccessories] = useState("");
   const [editSpecialty, setEditSpecialty] = useState("");  
   const [editFaction, setEditFaction] = useState("");
+  const [editHasFileCard, setEditHasFileCard] = useState(false);
 
  useEffect(() => {
   fetch("http://localhost:5116/api/joes")
@@ -29,9 +31,10 @@ const handleSubmit = (e) => {
 
   const newJoe = {
     name,
-    placeOfBirth,
+    accessories,
     specialty,
-    faction
+    faction,
+    hasFileCard
   };  
 
   fetch("http://localhost:5116/api/joes", {
@@ -49,9 +52,10 @@ const handleSubmit = (e) => {
     .then(data => {
       setJoes(data.data);
       setName("");
-      setPlaceOfBirth("");
+      setAccessories("");
       setSpecialty("");
       setFaction("");
+      setHasFileCard(false);
     })
     .catch(err => console.error(err));
 };  
@@ -81,20 +85,12 @@ const handleSubmit = (e) => {
     const handleEdit = (joe) => {
       setEditingId(joe.id);
       setEditName(joe.name);
-      setEditPlaceOfBirth(joe.placeOfBirth);
+      setEditAccessories(joe.accessories);
       setEditSpecialty(joe.specialty);
       setEditFaction(joe.faction);
-};
-    const handleSave = (id) => {
+      setEditHasFileCard(joe.hasFileCard);
+};   
 
-    const updatedJoe = {
-        name: editName,
-        placeOfBirth: editPlaceOfBirth,
-        specialty: editSpecialty,
-        faction: editFaction
-    };
-
-};
   return (
     <div>
       <h1>GI Joe Characters</h1>
@@ -130,9 +126,9 @@ const handleSubmit = (e) => {
 
   <input
     type="text"
-    placeholder="Place of Birth"
-    value={placeOfBirth}
-    onChange={(e) => setPlaceOfBirth(e.target.value)}
+    placeholder="Accessories"
+    value={accessories}
+    onChange={(e) => setAccessories(e.target.value)}
   />
 
   <input
@@ -147,6 +143,14 @@ const handleSubmit = (e) => {
     value={faction}
     onChange={(e) => setFaction(e.target.value)}
   />
+  <label>
+  File Card:
+  <input
+    type="checkbox"
+    checked={hasFileCard}
+    onChange={(e) => setHasFileCard(e.target.checked)}
+  />
+  </label>
 
   <button type="submit">Add Joe</button>
 </form>
@@ -169,8 +173,8 @@ value={editName}
 onChange={(e) => setEditName(e.target.value)}
 />
 <input 
-value={editPlaceOfBirth}
-onChange={(e) => setEditPlaceOfBirth(e.target.value)}
+value={editAccessories}
+onChange={(e) => setEditAccessories(e.target.value)}
 />
 <input 
 value={editSpecialty}
@@ -189,9 +193,10 @@ onChange={(e) => setEditFaction(e.target.value)}
     },
     body: JSON.stringify({
       name: editName,
-      placeOfBirth: editPlaceOfBirth,
+      accessories: editAccessories,
       specialty: editSpecialty,
-      faction: editFaction
+      faction: editFaction,
+      hasFileCard: editHasFileCard
     })
   })
     .then(() => {
@@ -211,15 +216,15 @@ onChange={(e) => setEditFaction(e.target.value)}
 </button>
 </>       
 
-        ) : (
+    ) : (
         <>
 
-        <h2>
-          {joe.faction?.toLowerCase() === "cobra"
-            ? "COBRA ENEMY!"
-            : "GI JOE"
-          }
+<h2>
+{joe.faction?.toLowerCase() === "cobra"
+  ? "COBRA ENEMY!"
+  : "GI JOE"}
 </h2>
+
 <h2>
 {joe.faction?.toLowerCase() === "cobra"
   ? "ENEMY INTELLIGENCE FILE"
@@ -231,11 +236,14 @@ onChange={(e) => setEditFaction(e.target.value)}
 <h4>SPECIALTY</h4>
 <p>{joe.specialty}</p>
 
-<h4>BIRTHPLACE</h4>
-<p>{joe.placeOfBirth}</p>
+<h4>ACCESSORIES</h4>
+<p>{joe.accessories}</p>
 
 <h4>FACTION</h4>
-<p>{joe.faction}</p>          
+<p>{joe.faction}</p>    
+
+<h4>FILE CARD</h4>
+<p>{joe.hasFileCard ? "YES" : "NO"}</p>
 
 <button onClick={() => handleDelete(joe.id)}>
     Delete
