@@ -8,7 +8,7 @@ function App() {
   const [accessories, setAccessories] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [faction, setFaction] = useState("");
-  const [hasFileCard, setHasFileCard] = useState(false);
+  const [hasFileCard, setHasFileCard] = useState(false);  
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editAccessories, setEditAccessories] = useState("");
@@ -137,12 +137,18 @@ const handleSubmit = (e) => {
     value={specialty}
     onChange={(e) => setSpecialty(e.target.value)}
   />
-  <input
-    type="text"
-    placeholder="Faction"
-    value={faction}
-    onChange={(e) => setFaction(e.target.value)}
-  />
+  <label htmlFor="faction">Faction</label>
+    <select
+      id="faction"
+      name="faction"
+      value={faction}
+      onChange={(e) => setFaction(e.target.value)}
+    >
+    <option value="">Select faction</option>
+    <option value="GI Joe">GI Joe</option>
+    <option value="Cobra">Cobra</option>
+    </select>
+
   <label>
   File Card:
   <input
@@ -168,22 +174,53 @@ const handleSubmit = (e) => {
 <>
 <h3>Editing Character</h3>
 
-<input 
-value={editName}
-onChange={(e) => setEditName(e.target.value)}
-/>
-<input 
-value={editAccessories}
-onChange={(e) => setEditAccessories(e.target.value)}
-/>
-<input 
-value={editSpecialty}
-onChange={(e) => setEditSpecialty(e.target.value)}
-/>
-<input 
-value={editFaction}
-onChange={(e) => setEditFaction(e.target.value)}
-/>
+<label>
+  Name
+  <input
+    type="text"
+    value={editName}
+    onChange={(e) => setEditName(e.target.value)}
+  />
+</label>
+
+<label>
+  Accessories
+  <input
+    type="text"
+    value={editAccessories}
+    onChange={(e) => setEditAccessories(e.target.value)}
+  />
+</label>
+
+<label>
+  Specialty
+  <input
+    type="text"
+    value={editSpecialty}
+    onChange={(e) => setEditSpecialty(e.target.value)}
+  />
+</label>
+
+<label htmlFor="edit-faction">Faction</label>
+<select
+  id="edit-faction"
+  name="faction"
+  value={editFaction}
+  onChange={(e) => setEditFaction(e.target.value)}
+>
+  <option value="">Select faction</option>
+  <option value="GI Joe">GI Joe</option>
+  <option value="Cobra">Cobra</option>
+</select>
+
+<label>
+  File Card
+  <input
+    type="checkbox"
+    checked={editHasFileCard}
+    onChange={(e) => setEditHasFileCard(e.target.checked)}
+  />
+</label>
 
 <button onClick={() => {
   fetch(`http://localhost:5116/api/joes/${editingId}`, {
