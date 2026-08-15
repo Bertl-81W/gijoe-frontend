@@ -116,8 +116,10 @@ const handleSubmit = (e) => {
     </button>
    </div>
 
-       <form onSubmit={handleSubmit}>
+<form className="character-form"onSubmit={handleSubmit}>
   <input
+    id="name"
+    name="name"
     type="text"
     placeholder="Name"
     value={name}
@@ -126,6 +128,8 @@ const handleSubmit = (e) => {
 
   <input
     type="text"
+    id="accessories"
+    name="accessories"
     placeholder="Accessories"
     value={accessories}
     onChange={(e) => setAccessories(e.target.value)}
@@ -133,6 +137,8 @@ const handleSubmit = (e) => {
 
   <input
     type="text"
+    id="specialty"
+    name="specialty"
     placeholder="Specialty"
     value={specialty}
     onChange={(e) => setSpecialty(e.target.value)}
@@ -149,14 +155,20 @@ const handleSubmit = (e) => {
     <option value="Cobra">Cobra</option>
     </select>
 
-  <label>
-  File Card:
-  <input
-    type="checkbox"
-    checked={hasFileCard}
-    onChange={(e) => setHasFileCard(e.target.checked)}
-  />
+ <div className="collector-status">
+  <span className="collector-status-title">COLLECTOR STATUS</span>
+
+  <label htmlFor="has-file-card" className="checkbox-label">
+    <input
+      id="has-file-card"
+      name="hasFileCard"
+      type="checkbox"
+      checked={hasFileCard}
+      onChange={(e) => setHasFileCard(e.target.checked)}
+    />
+    <span>I HAVE THE FILE CARD</span>
   </label>
+</div>
 
   <button type="submit">Add Joe</button>
 </form>
@@ -171,89 +183,98 @@ const handleSubmit = (e) => {
         } 
        >  
        {editingId === joe.id ? (
-<>
-<h3>Editing Character</h3>
+         <><div className="edit-form">
+            </div><>
+              <h3>Editing Character</h3>
 
-<label>
-  Name
-  <input
-    type="text"
-    value={editName}
-    onChange={(e) => setEditName(e.target.value)}
-  />
-</label>
+             <label>
+                Name
+                <input
+                  id="edit-name"
+                  name="edit-name"
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)} />
+                </label>
 
-<label>
-  Accessories
-  <input
-    type="text"
-    value={editAccessories}
-    onChange={(e) => setEditAccessories(e.target.value)}
-  />
-</label>
+                <label>
+                  Accessories
+                  <input
+                    type="text"
+                    id="edit-accessories"
+                    name="edit-accessories"
+                    value={editAccessories}
+                    onChange={(e) => setEditAccessories(e.target.value)} />
+                </label>
 
-<label>
-  Specialty
-  <input
-    type="text"
-    value={editSpecialty}
-    onChange={(e) => setEditSpecialty(e.target.value)}
-  />
-</label>
+                <label>
+                  Specialty
+                  <input
+                    type="text"
+                    id="edit-specialty"
+                    name="edit-specialty"
+                    value={editSpecialty}
+                    onChange={(e) => setEditSpecialty(e.target.value)} />
+                </label>
 
-<label htmlFor="edit-faction">Faction</label>
-<select
-  id="edit-faction"
-  name="faction"
-  value={editFaction}
-  onChange={(e) => setEditFaction(e.target.value)}
->
-  <option value="">Select faction</option>
-  <option value="GI Joe">GI Joe</option>
-  <option value="Cobra">Cobra</option>
-</select>
+                <label htmlFor="edit-faction">Faction</label>
+                <select
+                  id="edit-faction"
+                  name="faction"
+                  value={editFaction}
+                  onChange={(e) => setEditFaction(e.target.value)}
+                >
+                  <option value="">Select faction</option>
+                  <option value="GI Joe">GI Joe</option>
+                  <option value="Cobra">Cobra</option>
+                </select>
 
-<label>
-  File Card
-  <input
-    type="checkbox"
-    checked={editHasFileCard}
-    onChange={(e) => setEditHasFileCard(e.target.checked)}
-  />
-</label>
+              <div className="collector-status">
+                <span className="collector-status-title">COLLECTOR STATUS</span>
 
-<button onClick={() => {
-  fetch(`http://localhost:5116/api/joes/${editingId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name: editName,
-      accessories: editAccessories,
-      specialty: editSpecialty,
-      faction: editFaction,
-      hasFileCard: editHasFileCard
-    })
-  })
-    .then(() => {
-      setEditingId(null);
-        // refreshes the list of Jooes after editing them
-      fetch("http://localhost:5116/api/joes?pageSize=100")
-        .then(res => res.json())
-        .then(data => setJoes(data.data));
-    })
-    .catch(err => console.error(err));
-}}>
-  Save
-</button>
+               <label htmlFor="edit-file-card" className="checkbox-label">
+                 <input
+                   id="edit-file-card"
+                   name="hasFileCard"
+                   type="checkbox"
+                   checked={editHasFileCard}
+                   onChange={(e) => setEditHasFileCard(e.target.checked)}
+               />
+                <span>I HAVE THE FILE CARD</span>
+              </label>
+            </div>
 
-<button onClick={() => setEditingId(null)}>
-    Cancel
-</button>
-</>       
+                <button onClick={() => {
+                  fetch(`http://localhost:5116/api/joes/${editingId}`, {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                      name: editName,
+                      accessories: editAccessories,
+                      specialty: editSpecialty,
+                      faction: editFaction,
+                      hasFileCard: editHasFileCard
+                    })
+                  })
+                    .then(() => {
+                      setEditingId(null);
+                      // refreshes the list of Jooes after editing them
+                      fetch("http://localhost:5116/api/joes?pageSize=100")
+                        .then(res => res.json())
+                        .then(data => setJoes(data.data));
+                    })
+                    .catch(err => console.error(err));
+                } }>
+                  Save
+                </button>
 
-    ) : (
+                <button onClick={() => setEditingId(null)}>
+                  Cancel
+                </button>
+              </></>  
+          ) : (
         <>
 
 <h2>
