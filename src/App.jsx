@@ -300,8 +300,15 @@ const handleSubmit = (e) => {
 <h4>FACTION</h4>
 <p>{joe.faction}</p>    
 
-<h4>FILE CARD</h4>
-<p>{joe.hasFileCard ? "YES" : "NO"}</p>
+<div className="card-collector-status">
+  <h4>COLLECTOR STATUS</h4>
+
+  <p className={joe.hasFileCard ? "has-file-card" : "missing-file-card"}>
+    {joe.hasFileCard
+      ? "✓ FILE CARD"
+      : "✗ FILE CARD MISSING"}
+  </p>
+</div>
 
 <button onClick={() => handleDelete(joe.id)}>
     Delete
