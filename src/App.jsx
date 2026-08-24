@@ -8,14 +8,16 @@ function App() {
   const [accessories, setAccessories] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [faction, setFaction] = useState("");
-  const [hasFileCard, setHasFileCard] = useState(false);  
+  const [hasFileCard, setHasFileCard] = useState(false); 
+  const [imageFile, setImageFile] = useState(null);   
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editAccessories, setEditAccessories] = useState("");
   const [editSpecialty, setEditSpecialty] = useState("");  
   const [editFaction, setEditFaction] = useState("");
   const [editHasFileCard, setEditHasFileCard] = useState(false);
-
+  const [editImageFile, setEditImageFile] = useState(null);
+   
  useEffect(() => {
   fetch("http://localhost:5116/api/joes")
     .then(res => res.json())
@@ -26,7 +28,7 @@ function App() {
     .catch(err => console.error("API error:", err));
 }, []);
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const newJoe = {
@@ -35,30 +37,64 @@ const handleSubmit = (e) => {
     specialty,
     faction,
     hasFileCard
-  };  
+  };
 
-  fetch("http://localhost:5116/api/joes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(newJoe)
-  })  
-  .then(() => {      
-      return fetch("http://localhost:5116/api/joes?pageSize=100");
-    })
+  try {
+                                //  Create the character
+    const response = await fetch("http://localhost:5116/api/joes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newJoe)
+    });
 
-    .then(res => res.json())
-    .then(data => {
-      setJoes(data.data);
-      setName("");
-      setAccessories("");
-      setSpecialty("");
-      setFaction("");
-      setHasFileCard(false);
-    })
-    .catch(err => console.error(err));
-};  
+    if (!response.ok) {
+      throw new Error("Failed to create character");
+    }
+
+    const createdJoe = await response.json();
+
+                           // Upload the photo if one was selected
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const imageResponse = await fetch(
+        `http://localhost:5116/api/joes/${createdJoe.id}/image`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      if (!imageResponse.ok) {
+        throw new Error("Character created, but image upload failed");
+      }
+    }
+
+                        // Refresh the character list
+    const listResponse = await fetch(
+      "http://localhost:5116/api/joes?pageSize=100"
+    );
+
+    const data = await listResponse.json();
+
+    setJoes(data.data);
+
+                            // ANd Clear the form
+    setName("");
+    setAccessories("");
+    setSpecialty("");
+    setFaction("");
+    setHasFileCard(false);
+    setImageFile(null);
+    setEditingId(null);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
     const handleDelete = (id) => {
      fetch(`http://localhost:5116/api/joes/${id}`, {
@@ -89,6 +125,7 @@ const handleSubmit = (e) => {
       setEditSpecialty(joe.specialty);
       setEditFaction(joe.faction);
       setEditHasFileCard(joe.hasFileCard);
+      setEditImageFile(null);
 };   
 
   return (
@@ -167,7 +204,19 @@ const handleSubmit = (e) => {
       onChange={(e) => setHasFileCard(e.target.checked)}
     />
     <span>I HAVE THE FILE CARD</span>
-  </label>
+  </label>  
+</div>
+
+<div className="photo-upload">
+  <label htmlFor="image-file">Figure Photo</label>
+
+  <input
+    id="image-file"
+    name="image"
+    type="file"
+    accept="image/*"
+    onChange={(e) => setImageFile(e.target.files[0])}
+  />
 </div>
 
   <button type="submit">Add Joe</button>
@@ -182,9 +231,17 @@ const handleSubmit = (e) => {
           : "joe-card"
         } 
        >  
+      {joe.imageUrl && (
+        <img
+        src={`http://localhost:5116${joe.imageUrl}`}
+        alt={joe.name}
+        className="character-image"
+        />
+      )}
+
        {editingId === joe.id ? (
          <><div className="edit-form">
-            </div><>
+           
               <h3>Editing Character</h3>
 
              <label>
@@ -229,6 +286,14 @@ const handleSubmit = (e) => {
                   <option value="Cobra">Cobra</option>
                 </select>
 
+               <label htmlFor="edit-image-file">Figure Photo</label>
+                <input
+                  id="edit-image-file"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEditImageFile(e.target.files[0])}
+                />
               <div className="collector-status">
                 <span className="collector-status-title">COLLECTOR STATUS</span>
 
@@ -244,36 +309,74 @@ const handleSubmit = (e) => {
               </label>
             </div>
 
-                <button onClick={() => {
-                  fetch(`http://localhost:5116/api/joes/${editingId}`, {
-                    method: "PUT",
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                      name: editName,
-                      accessories: editAccessories,
-                      specialty: editSpecialty,
-                      faction: editFaction,
-                      hasFileCard: editHasFileCard
-                    })
-                  })
-                    .then(() => {
+                <button
+                  onClick={async () => {
+                    try {
+                      // Update character information
+                      const response = await fetch(
+                        `http://localhost:5116/api/joes/${editingId}`,
+                        {
+                          method: "PUT",
+                          headers: {
+                            "Content-Type": "application/json"
+                          },
+                          body: JSON.stringify({
+                            name: editName,
+                            accessories: editAccessories,
+                            specialty: editSpecialty,
+                            faction: editFaction,
+                            hasFileCard: editHasFileCard
+                          })
+                        }
+                      );
+
+                      if (!response.ok) {
+                        throw new Error("Failed to update character");
+                      }
+
+                      // Upload new photo if one was selected
+                      if (editImageFile) {
+                        const formData = new FormData();
+                        formData.append("image", editImageFile);
+
+                        const imageResponse = await fetch(
+                          `http://localhost:5116/api/joes/${editingId}/image`,
+                          {
+                            method: "POST",
+                            body: formData
+                          }
+                        );
+
+                        if (!imageResponse.ok) {
+                          throw new Error("Character updated, but image upload failed");
+                        }
+                      }
+
+                      // Refreshes characters
+                      const listResponse = await fetch(
+                        "http://localhost:5116/api/joes?pageSize=100"
+                      );
+
+                      const data = await listResponse.json();
+
+                      setJoes(data.data);
+
+                      // Exit edit mode
                       setEditingId(null);
-                      // refreshes the list of Jooes after editing them
-                      fetch("http://localhost:5116/api/joes?pageSize=100")
-                        .then(res => res.json())
-                        .then(data => setJoes(data.data));
-                    })
-                    .catch(err => console.error(err));
-                } }>
+                      setEditImageFile(null);
+
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                >
                   Save
                 </button>
 
                 <button onClick={() => setEditingId(null)}>
                   Cancel
                 </button>
-              </></>  
+              </div></>  
           ) : (
         <>
 
